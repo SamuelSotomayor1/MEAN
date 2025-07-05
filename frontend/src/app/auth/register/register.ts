@@ -22,6 +22,8 @@ export class Register {
     this.http.post('http://localhost:3002/api/register', this.user).subscribe({
       next: (res) => {
         console.log('Usuario registrado correctamente', res);
+        alert('Usuario registrado correctamente');
+        
         // Redirige o muestra mensaje
       },
       error: (err) => {
