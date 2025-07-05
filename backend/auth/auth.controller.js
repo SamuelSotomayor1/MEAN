@@ -52,7 +52,7 @@ exports.loginUser = async (req, res, next) => {
 
     // Generar token
     const expiresIn = 24 * 60 * 60;
-    const accessToken = jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn });
+    const accessToken = jwt.sign({ email: user.email }, SECRET_KEY, { expiresIn });
 
     // Responder con datos del usuario y token
     return res.status(200).json({
