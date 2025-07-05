@@ -3,43 +3,65 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const SECRET_KEY = "secretkey123456";
 
-exports.createUser = (req, res, next) => {
-    const newUser = {
-        email: req.body.email,
-        password: req.body.password,
-    }
+exports.createUser = async (req, res, next) => {
+    try {
+        const newUser = {
+            email: req.body.email,
+            password: bcrypt.hashSync(req.body.password, 10),
+        };
 
-    User.create(newUser, (err, user)=>{
-        if (err) return res.status(500).send('Server error');
+        // Espera a que se cree el usuario, sin callback
+        const user = await User.create(newUser);
+
         const expiresIn = 24 * 60 * 60;
-        const accessToken = jwt.sign({id: user.id},
-            SECRET_KEY, {
-                expiresIn: expiresIn
-        });
 
-        //response
-        res.send({user});
-    })
+        const accessToken = jwt.sign(
+            { email: user.email },
+            SECRET_KEY,
+            { expiresIn }
+        );
+
+        const dataUser = {
+            email: user.email,
+            accessToken,
+            expiresIn
+        };
+
+        return res.status(201).json({ dataUser });
+    } catch (err) {
+        console.error('Error al crear usuario:', err);
+        return res.status(500).json({ message: 'Error al crear usuario', error: err });
+    }
 };
 
-exports.loginUser = (req, res, next) => {
-    const userData = {
-        email: req.body.email,
-        password: req.body.password
+exports.loginUser = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    // Buscar usuario por email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(409).json({ message: 'Usuario no encontrado' });
     }
-    User.findOne({email: userData.email}, (err, user) => {
-        if(err) return res.status(500).send('Server error');
-        if(!user){
-            res.status(409).send({message: 'Something is wrong'});
-        } else {
-            const resultPassword = userData.password;
-            if(resultPassword){
-                const expiresIn = 24 * 60 * 60;
-                const accessToken = jwt.sign({id: user.id}, SECRET_KEY, {expiresIn: expiresIn});
-                res.send({ userData });
-            } else {
-                res.status(409).send({message: "Password is wrong"});
-            }
-        }
+
+    // Comparar contraseña enviada con la guardada (hasheada)
+    const passwordIsValid = bcrypt.compareSync(password, user.password);
+    if (!passwordIsValid) {
+      return res.status(409).json({ message: 'Contraseña incorrecta' });
+    }
+
+    // Generar token
+    const expiresIn = 24 * 60 * 60;
+    const accessToken = jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn });
+
+    // Responder con datos del usuario y token
+    return res.status(200).json({
+      email: user.email,
+      accessToken,
+      expiresIn,
     });
-}
+  } catch (error) {
+    console.error('Error en loginUser:', error);
+    return res.status(500).json({ message: 'Error en el servidor' });
+  }
+};

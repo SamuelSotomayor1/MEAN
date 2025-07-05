@@ -17,10 +17,10 @@ const bodyParserURLEncoded = bodyParser.urlencoded({ extended: true });
 
 authRoutes(router)
 
+app.use('/api', router);
+
 app.use(bodyParserJSON);
 app.use(bodyParserURLEncoded);
-
-app.use('/api', router);
 
 router.get('/', (req,res) => {
     res.send('Hello');
