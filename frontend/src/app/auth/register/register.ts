@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HttpClient} from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -16,7 +17,7 @@ export class Register {
     password: ''
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   register() {
     this.http.post('http://localhost:3002/api/register', this.user).subscribe({
@@ -24,6 +25,7 @@ export class Register {
         console.log('Usuario registrado correctamente', res);
         alert('Usuario registrado correctamente');
         
+        this.router.navigate(['/login']);
         // Redirige o muestra mensaje
       },
       error: (err) => {

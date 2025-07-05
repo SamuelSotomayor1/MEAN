@@ -6,5 +6,6 @@ import { Home } from './pages/home/home';
 export const routes: Routes = [
     {path: "login", component: Login},
     {path: "register", component: Register},
-    {path: "", component: Home},
+    {path: "home", component: Home},
+    {path: "", component: Login},
 ];
