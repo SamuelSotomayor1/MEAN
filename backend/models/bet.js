@@ -22,9 +22,6 @@ const betSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  notes: {
-    type: String
-  }
 });
 
 module.exports = mongoose.model('Bet', betSchema);
