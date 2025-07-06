@@ -1,0 +1,2 @@
+
+app.use("/bets", betUser);
