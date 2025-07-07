@@ -20,7 +20,7 @@ export class Login {
   constructor(private http: HttpClient, private router: Router) {}
 
   login() {
-  this.http.post('http://localhost:3002/login', this.user).subscribe({
+  this.http.post('http://localhost:3002/api/login', this.user).subscribe({
     next: (res: any) => {
       console.log('Usuario logueado correctamente', res);
       localStorage.setItem('token', res.accessToken);

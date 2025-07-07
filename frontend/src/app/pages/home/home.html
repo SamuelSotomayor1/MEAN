@@ -1,1 +1,38 @@
 <app-navbar></app-navbar>
+<div class="p-6">
+  <h2 class="text-2xl font-bold mb-4">Apuestas</h2>
+
+  <!-- Tabla de apuestas -->
+  <table class="min-w-full border">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="p-2 border">Partido</th>
+        <th class="p-2 border">Apostado</th>
+        <th class="p-2 border">Ganado</th>
+        <th class="p-2 border">Estado</th>
+        <th class="p-2 border">Fecha</th>
+        <th class="p-2 border">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let bet of bets" class="border-t">
+        <td class="p-2">{{ bet.match }}</td>
+        <td class="p-2">${{ bet.amountBet }}</td>
+        <td class="p-2">${{ bet.amountWon }}</td>
+        <td class="p-2">
+          <span [ngClass]="{
+            'text-green-600 font-bold': bet.status === 'ganado',
+            'text-red-600 font-bold': bet.status === 'perdido'
+          }">
+            {{ bet.status }}
+          </span>
+        </td>
+        <td class="p-2">{{ bet.date | date: 'short' }}</td>
+        <td class="p-2 flex gap-2">
+          <button class="bg-blue-500 text-white px-2 py-1 rounded">Editar</button>
+          <button (click)="deleteBet(bet._id)" class="bg-red-500 text-white px-2 py-1 rounded">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
